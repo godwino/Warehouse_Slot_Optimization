@@ -2,6 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-red.svg)](https://streamlit.io/)
+[![CI](https://github.com/godwino/Warehouse_Slot_Optimization/actions/workflows/ci.yml/badge.svg)](https://github.com/godwino/Warehouse_Slot_Optimization/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-unittest-green.svg)](./tests)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](./LICENSE)
 
@@ -67,6 +68,12 @@ warehouse_digital_twin/
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
 ```
+
+## GitHub Operations
+- CI workflow: `.github/workflows/ci.yml`
+- Changelog: `CHANGELOG.md`
+- Contribution guide: `CONTRIBUTING.md`
+- Roadmap: `ROADMAP.md`
 
 ## Notes on Reproducibility
 - The app exposes a `Random Seed` sidebar control.
