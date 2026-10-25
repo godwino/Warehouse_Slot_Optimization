@@ -1,14 +1,14 @@
-# Grocery slotting decision support
+# Stable pallet builder for grocery pickers
 
-A local Streamlit application for QA to review grocery case positions within approved zones. Credit: Godwin Osayamwen.
+A local Streamlit application for QA and warehouse teams to review case placement and build safer, more stable grocery pallets within approved zones. The primary goal is to help pickers assemble pallets that are stable, crush-resistant and more operationally safe, while still improving pick efficiency and decision quality. Credit: Godwin Osayamwen.
 
 ## Run on Windows PowerShell
 
 ```powershell
 cd C:\Users\Osayamwen\Desktop\Slot_Optimization\warehouse_digital_twin
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m streamlit run app/streamlit_app.py
+\.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+\.\.venv\Scripts\python.exe -m streamlit run app/streamlit_app.py
 ```
 
 Open the localhost address printed by Streamlit. For an environment with dependencies already installed: `python -m streamlit run app/streamlit_app.py`.
@@ -22,13 +22,13 @@ The export command creates reproducible synthetic CSVs, blank templates and an i
 
 ## Workflow
 
-1. Overview explains baseline/proposed metrics and assumptions.
-2. Improve Existing Positions evaluates vacancies, swaps and bounded three-product cycles. Inspect current/proposed route maps and objective values.
-3. Follow a Sample Assignment compares identical case quantities on the explicit route.
-4. Place a New Product ranks vacancies and displacement chains, using expected frequency as a cold-start assumption.
-5. QA Review saves an immutable scenario. Record reviewed before approved, with reviewer and notes. Approval does not execute moves.
+1. Overview explains the current baseline, proposed pallet-support metrics and the assumptions behind stable case placement.
+2. Improve Existing Positions evaluates vacancies, swaps and bounded three-product cycles. Inspect current/proposed route maps and objective values with a focus on case compatibility and stable pallet construction.
+3. Follow a Sample Assignment compares identical case quantities on the explicit route and highlights support/crushability trade-offs in pallet formation.
+4. Place a New Product ranks vacancies and displacement chains using expected frequency as a cold-start assumption while checking whether a case can be safely integrated into stable pallet builds.
+5. QA Review saves an immutable scenario. Record reviewed before approved, with reviewer and notes. Approval does not execute moves, but it does create a decision record for safe pallet build planning.
 6. Data and Validation supports searches, CSVs, scenario JSON and demo route configuration (01-48 or 11-58). Regenerating the demo replaces the active in-memory draft.
-7. Stakeholder Brief provides a downloadable pilot outline.
+7. Stakeholder Brief provides a downloadable pilot outline focused on pallet stability and picker safety.
 
 SQLite snapshots and review history live in `data/scenarios.sqlite3`. Export/import scenario JSON includes data, configuration and proposed assignments; review history stays in the local database and is not imported as an approval. This is not enterprise authentication or a production approval system.
 

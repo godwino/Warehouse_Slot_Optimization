@@ -1,4 +1,5 @@
-﻿"""Grocery slotting decision support. Launch from repository root with Streamlit."""
+﻿"""Stable pallet planning and picker support for grocery warehouse teams."""
+
 import sys
 import json
 from pathlib import Path
@@ -19,10 +20,10 @@ ROOT=Path(__file__).resolve().parents[1]
 def table(rows): return pd.DataFrame([asdict(x) for x in rows])
 
 def main():
-    st.set_page_config(page_title='Grocery Slotting | QA',layout='wide')
-    st.title('Grocery slotting decisions')
-    st.caption('Zone 1 pilot • Decision support for QA • Godwin Osayamwen')
-    st.warning('Sequence scores are proxies, not physical pallet simulations or predictions of damage. All recommendations require QA review.')
+    st.set_page_config(page_title='Stable Pallet Planner | QA',layout='wide')
+    st.title('Stable pallet planning for grocery pickers')
+    st.caption('Zone 1 pilot • Safe pallet build decisions • Godwin Osayamwen')
+    st.warning('This tool supports QA review of stable pallet construction. It is not a physical pallet simulation, and all recommendations still require human review before execution.')
     if 'dataset' not in st.session_state:
         c=Config(); p,l,o=sample(c); st.session_state.dataset=(p,l,o,c,{x.sku:x.location for x in p})
     p,l,o,c,a=st.session_state.dataset
@@ -30,13 +31,14 @@ def main():
     st.sidebar.caption('Synthetic data: 63 grocery cases; 30 days. No WMS or Vocollect connection.')
     base={x.sku:x.location for x in p if x.location}
     if page=='Overview':
-        st.write('Products already belong to approved zones. QA can improve where cases are collected so strong supporting cases tend to precede vulnerable cases within a zone assignment. Pallets leave for wrapping and shipping after that assignment.')
+        st.write('The main purpose of this app is to help pickers and QA teams build safer, more stable pallets. It ranks case placements and collection order using support, crushability, weight, dimensions and demand so that vulnerable cases are not stacked beneath stronger supporting cases without consideration.')
+        st.write('The app also supports slotting improvements, new-product placement and decision review, but these features exist to support stable pallet construction and safer picker workflows.')
         if all(x.sku in base for x in o):
             result=compare(p,l,o,base,a,c)
             st.dataframe(pd.DataFrame(result).T,use_container_width=True)
             st.caption('Lower sequence proxy is preferred. Both columns use identical order lines (workload hash shown). Travel is illustrative front-entry/front-exit, ascending bay visits; timing uses assumptions below.')
         st.json(asdict(c))
-        st.write('No claims of safety, damage reduction, productivity gains or savings are established by these estimates.')
+        st.write('No claims of safety, damage reduction, productivity gains or savings are established by these estimates; they are decision-support indicators only.')
     elif page=='Improve Existing Positions':
         with st.form('priorities'):
             penalty=st.number_input('Penalty per relocated product',0.,1.,c.move_penalty,step=.001)
