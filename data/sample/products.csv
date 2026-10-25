@@ -1,0 +1,64 @@
+sku,description,category,zone,weight_kg,length_cm,width_cm,height_cm,packaging,support,crushability,max_top_kg,location,locked,expected_frequency,required_stock,allowed_levels
+G001,Vinegar Original,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-37,True,0,4,1
+G002,Water Original,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-22,True,0,4,1
+G003,Pepsi Original,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-42,False,0,4,1
+G004,Juice Original,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-34,False,0,4,1
+G005,Great Value cola Original,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-20,False,0,4,1
+G006,Rice Original,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D4-15,False,0,4,1
+G007,Chips Original,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D4-10,False,0,4,1
+G008,Vinegar Family Pack,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D4-04,False,0,4,1
+G009,Water Family Pack,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-40,False,0,4,1
+G010,Pepsi Family Pack,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-31,False,0,4,1
+G011,Juice Family Pack,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D4-14,False,0,4,1
+G012,Great Value cola Family Pack,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-32,False,0,4,1
+G013,Rice Family Pack,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-19,False,0,4,1
+G014,Chips Family Pack,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-24,False,0,4,1
+G015,Vinegar Classic,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-10,False,0,4,1
+G016,Water Classic,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-17,False,0,4,1
+G017,Pepsi Classic,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-12,False,0,4,1
+G018,Juice Classic,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-21,False,0,4,1
+G019,Great Value cola Classic,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D4-01,False,0,4,1
+G020,Rice Classic,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-47,False,0,4,1
+G021,Chips Classic,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-04,False,0,4,1
+G022,Vinegar Large Pack,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-30,False,0,4,1
+G023,Water Large Pack,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D4-06,False,0,4,1
+G024,Pepsi Large Pack,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-05,False,0,4,1
+G025,Juice Large Pack,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D4-08,False,0,4,1
+G026,Great Value cola Large Pack,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-11,False,0,4,1
+G027,Rice Large Pack,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D4-05,False,0,4,1
+G028,Chips Large Pack,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-23,False,0,4,1
+G029,Vinegar Value Pack,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-45,False,0,4,1
+G030,Water Value Pack,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-26,False,0,4,1
+G031,Pepsi Value Pack,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-25,False,0,4,1
+G032,Juice Value Pack,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-01,False,0,4,1
+G033,Great Value cola Value Pack,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D4-11,False,0,4,1
+G034,Rice Value Pack,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-29,False,0,4,1
+G035,Chips Value Pack,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-43,False,0,4,1
+G036,Vinegar Premium,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-27,False,0,4,1
+G037,Water Premium,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D4-03,False,0,4,1
+G038,Pepsi Premium,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-13,False,0,4,1
+G039,Juice Premium,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-36,False,0,4,1
+G040,Great Value cola Premium,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-46,False,0,4,1
+G041,Rice Premium,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-39,False,0,4,1
+G042,Chips Premium,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-33,False,0,4,1
+G043,Vinegar Regular,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D4-09,False,0,4,1
+G044,Water Regular,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-14,False,0,4,1
+G045,Pepsi Regular,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D4-02,False,0,4,1
+G046,Juice Regular,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D4-13,False,0,4,1
+G047,Great Value cola Regular,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-03,False,0,4,1
+G048,Rice Regular,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-28,False,0,4,1
+G049,Chips Regular,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-38,False,0,4,1
+G050,Vinegar Bulk,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-06,False,0,4,1
+G051,Water Bulk,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-35,False,0,4,1
+G052,Pepsi Bulk,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D4-07,False,0,4,1
+G053,Juice Bulk,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-44,False,0,4,1
+G054,Great Value cola Bulk,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-07,False,0,4,1
+G055,Rice Bulk,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D4-12,False,0,4,1
+G056,Chips Bulk,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-09,False,0,4,1
+G057,Vinegar Select,Vinegar,Zone 1,12,40,30,28,rigid jug,0.9,0.15,35,D3-15,False,0,4,1
+G058,Water Select,Water,Zone 1,15,40,30,28,shrink wrap,0.85,0.2,35,D3-16,False,0,4,1
+G059,Pepsi Select,Pepsi,Zone 1,11,40,30,28,tray,0.75,0.25,35,D3-18,False,0,4,1
+G060,Juice Select,Juice,Zone 1,12,40,30,28,carton,0.7,0.3,35,D3-48,False,0,4,1
+G061,Great Value cola Select,Great Value cola,Zone 1,14,40,30,28,tray,0.8,0.2,35,D3-02,False,0,4,1
+G062,Rice Select,Rice,Zone 1,18,40,30,28,bag,0.9,0.1,35,D3-08,False,0,4,1
+G063,Chips Select,Chips,Zone 1,2,40,30,28,fragile carton,0.1,0.95,3,D3-41,False,0,4,1

@@ -1,0 +1,2 @@
+sku,description,category,zone,weight_kg,length_cm,width_cm,height_cm,packaging,support,crushability,max_top_kg,location,locked,expected_frequency,required_stock,allowed_levels
+OVERSIZE,Vinegar Original,Vinegar,Zone 1,12,200,30,28,rigid jug,0.9,0.15,35,,False,0,4,1

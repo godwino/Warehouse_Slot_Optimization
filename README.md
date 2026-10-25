@@ -1,80 +1,43 @@
-# HVDC Grocery Warehouse Digital Twin
+# Grocery slotting decision support
 
-[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-App-red.svg)](https://streamlit.io/)
-[![CI](https://github.com/godwino/Warehouse_Slot_Optimization/actions/workflows/ci.yml/badge.svg)](https://github.com/godwino/Warehouse_Slot_Optimization/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-unittest-green.svg)](./tests)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](./LICENSE)
+A local Streamlit application for QA to review grocery case positions within approved zones. Credit: Godwin Osayamwen.
 
-Python + Streamlit digital twin simulation for a grocery distribution center, showing how PRIME SLOT slotting reduces picker travel distance versus random slotting.
+## Run on Windows PowerShell
 
-## Suggested GitHub Description
-Digital twin simulation for grocery DC slotting optimization: compares random vs PRIME slotting and quantifies picker travel and productivity impact.
-
-## Why This Project
-- Demonstrates slotting strategy impact before operational rollout.
-- Provides an explainable baseline vs optimized comparison.
-- Supports decision-making with reproducible simulation and KPI outputs.
-
-## Features
-- Synthetic data generation for 1,000 SKUs (configurable)
-- 100 truck arrivals simulation (configurable)
-- Warehouse layout with aisles, bays, and levels
-- Slotting strategies:
-  - Random slotting
-  - PRIME slotting (closest travel + ergonomic levels 2/3)
-- Picker travel simulation across outbound orders
-- Streamlit dashboard with:
-  - KPIs (distance, cases, CPH, distance saved)
-  - Warehouse layout chart
-  - Picker travel heatmap
-  - Random vs PRIME comparison chart
-  - Scenario Comparison tab (baseline vs optimized side-by-side)
-  - CSV export buttons for key simulation outputs
-
-## Project Structure
-```text
-warehouse_digital_twin/
-|
-|-- app/
-|   |-- streamlit_app.py
-|-- src/
-|   |-- __init__.py
-|   |-- generate_data.py
-|   |-- warehouse_layout.py
-|   |-- slotting_engine.py
-|   |-- picking_simulation.py
-|   `-- truck_simulation.py
-|-- tests/
-|   |-- test_generate_data.py
-|   |-- test_layout_and_slotting.py
-|   `-- test_picking_and_trucks.py
-|-- requirements.txt
-`-- README.md
+```powershell
+cd C:\Users\Osayamwen\Desktop\Slot_Optimization\warehouse_digital_twin
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run app/streamlit_app.py
 ```
 
-## Local Setup
-1. Create and activate a Python 3.11 virtual environment.
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the app from project root:
-   ```bash
-   streamlit run app/streamlit_app.py
-   ```
+Open the localhost address printed by Streamlit. For an environment with dependencies already installed: `python -m streamlit run app/streamlit_app.py`.
 
-## Run Tests
-```bash
-python -m unittest discover -s tests -p "test_*.py"
+```powershell
+python -m unittest discover -s tests -v
+python -m src.export_sample
 ```
 
-## GitHub Operations
-- CI workflow: `.github/workflows/ci.yml`
-- Changelog: `CHANGELOG.md`
-- Contribution guide: `CONTRIBUTING.md`
-- Roadmap: `ROADMAP.md`
+The export command creates reproducible synthetic CSVs, blank templates and an infeasible example in `data/sample/`. The application also offers CSV downloads and atomic validated bundle imports. Use exact template headers, UTF-8, ISO dates and true/false booleans. Empty current locations denote unslotted products; order lines cannot reference an unslotted product.
 
-## Notes on Reproducibility
-- The app exposes a `Random Seed` sidebar control.
-- Using the same seed and inputs reproduces the same simulation outputs.
+## Workflow
+
+1. Overview explains baseline/proposed metrics and assumptions.
+2. Improve Existing Positions evaluates vacancies, swaps and bounded three-product cycles. Inspect current/proposed route maps and objective values.
+3. Follow a Sample Assignment compares identical case quantities on the explicit route.
+4. Place a New Product ranks vacancies and displacement chains, using expected frequency as a cold-start assumption.
+5. QA Review saves an immutable scenario. Record reviewed before approved, with reviewer and notes. Approval does not execute moves.
+6. Data and Validation supports searches, CSVs, scenario JSON and demo route configuration (01-48 or 11-58). Regenerating the demo replaces the active in-memory draft.
+7. Stakeholder Brief provides a downloadable pilot outline.
+
+SQLite snapshots and review history live in `data/scenarios.sqlite3`. Export/import scenario JSON includes data, configuration and proposed assignments; review history stays in the local database and is not imported as an approval. This is not enterprise authentication or a production approval system.
+
+## Modules and retained features
+
+`models`, `validation`, `sample_data`, `evaluation`, `optimization`, `movement`, and `persistence` separate the decision workflow. Original SKU generation, random/PRIME assignment, heatmaps and truck-arrival helpers remain available for legacy experiments. They are not the grocery constraint engine. Legacy picking now traverses each order by aisle rather than making one dock trip per line.
+
+See [algorithm](docs/algorithm.md), [data dictionary](docs/data_dictionary.md) and [stakeholder brief / walkthrough / pilot](docs/stakeholder_brief.md).
+
+## Limits
+
+Heuristic search is bounded, not globally optimal. Existing-layout optimization performs at most three passes; three-cycles cover only the first twelve movable products. New-product search is capped at 10,000 location checks and configured displacement depth, so an infeasible result means none found within that search. No physical pallet simulation, layer packing, aggregate stacking-load proof, damage prediction, WMS/Vocollect integration, operational execution, enterprise identities or production approval controls are implemented. Shared rack-beam loads and geometric stock packing require measured data and a future model. Declared stock capacity is checked separately from upright case fit. Geometry/timing and synthetic case characteristics require local validation. Do not use illustrative load ratings as manufacturer specifications.

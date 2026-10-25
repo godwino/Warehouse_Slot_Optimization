@@ -13,8 +13,12 @@ def simulate_picking(
 ) -> tuple[dict, pd.DataFrame]:
     """
     Simulate order picking.
-    Travel model: each order line is a round trip from dock to location.
+    Legacy geometry: each order follows aisle/bay order, returning to the front cross-aisle after each visited aisle. Illustrative, not calibrated.
     """
+    if walking_speed_mps <= 0 or handling_seconds_per_case < 0:
+        raise ValueError('Invalid timing assumptions')
+    if not orders_df['sku_id'].isin(slotting_df['sku_id']).all():
+        raise ValueError('Unknown order SKU; no lines may be dropped')
     picks = orders_df.merge(
         slotting_df[
             [
@@ -45,7 +49,12 @@ def simulate_picking(
             picks,
         )
 
-    picks["line_distance_m"] = 2.0 * picks["distance_to_pick_path_m"]
+    picks = picks.sort_values(['order_id','aisle','bay','level']).copy()
+    picks['line_distance_m'] = 0.0
+    for _, group in picks.groupby('order_id'):
+        distance = 2 * group['x_m'].max()
+        distance += sum(2 * aisle['y_m'].max() for _, aisle in group.groupby('aisle'))
+        picks.loc[group.index[0], 'line_distance_m'] = distance
     total_distance = float(picks["line_distance_m"].sum())
     cases_picked = int(picks["qty"].sum())
     travel_seconds = total_distance / walking_speed_mps

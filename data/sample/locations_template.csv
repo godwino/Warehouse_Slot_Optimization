@@ -1,0 +1,1 @@
+location_id,zone,aisle,bay,level,route,length_cm,width_cm,height_cm,case_weight_limit_kg,locked,stock_capacity,rack_load_limit_kg,replenishment_allowed
