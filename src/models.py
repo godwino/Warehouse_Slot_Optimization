@@ -20,10 +20,30 @@ class Product:
     expected_frequency: float = 0
     required_stock: int = 1
     allowed_levels: str = '1'
+    crushability_category: str = 'medium'
+    stackability: float = 0.5
+    allowed_orientations: str = 'front'
+    avg_cases_per_day: float = 0.0
+    pick_visits_per_day: float = 0.0
+    replenishment_lead_time_days: int = 1
+    handling_restrictions: str = ''
+    current_location: str = ''
 
     @property
     def volume_cm3(self):
         return self.length_cm * self.width_cm * self.height_cm
+
+    @property
+    def case_cube_m3(self):
+        return (self.length_cm * self.width_cm * self.height_cm) / 1_000_000
+
+    @property
+    def footprint_m2(self):
+        return (self.length_cm * self.width_cm) / 10_000
+
+    @property
+    def stability_index(self):
+        return (self.support * 0.5) + ((1 - self.crushability) * 0.5)
 
 @dataclass
 class Location:
@@ -41,6 +61,13 @@ class Location:
     stock_capacity: int = 20
     rack_load_limit_kg: float = 600
     replenishment_allowed: bool = True
+    usable_length_cm: float = 65
+    usable_width_cm: float = 55
+    usable_height_cm: float = 50
+    max_supported_weight_kg: float = 30
+    usable_capacity: int = 20
+    current_sku: str = ''
+    location_restrictions: str = ''
 
 @dataclass
 class OrderLine:
