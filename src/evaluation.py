@@ -78,7 +78,7 @@ def stability_score(product_a, product_b, direction='below'):
     """Higher is more stable. Penalize heavy-over-fragile and weak-under-heavy patterns."""
     weight_factor = 1 - min(1.0, abs(product_a.weight_kg - product_b.weight_kg) / 30)
     support = 1.0 if product_a.support >= product_b.support else 0.2
-    crush_penalty = product_b.crushability if direction == 'below' else product_a.crushability
+    crush_penalty = product_a.crushability if direction == 'below' else product_b.crushability
     footprint_match = 1.0 - abs(product_a.footprint_m2 - product_b.footprint_m2) / max(0.5, product_b.footprint_m2 + 0.5)
     top_load = 1.0 if product_a.max_top_kg >= product_b.weight_kg else 0.0
     score = (
@@ -91,14 +91,15 @@ def stability_score(product_a, product_b, direction='below'):
     return max(0.0, min(1.0, score))
 
 
-def pallet_stability_proxy(products, assignment=None):
+def pallet_stability_proxy(products, assignment=None, locations=None):
     """Estimate pallet-building safety from case attributes and route order."""
     current = assignment or {p.sku: p.location for p in products if p.location}
     items = [p for p in products if p.sku in current]
     if not items:
         return {'stability_score': 0.0, 'risk_flags': ['No assignments'], 'heavy_after_fragile': 0}
 
-    ordered = sorted(items, key=lambda p: (current[p.sku] if current[p.sku] else '', p.weight_kg), reverse=False)
+    route = {l.location_id: l.route for l in locations} if locations else {}
+    ordered = sorted(items, key=lambda p: route.get(current[p.sku], current[p.sku]))
     heavy_after_fragile = 0
     risk_flags = []
     for index, item in enumerate(ordered[:-1]):
@@ -132,7 +133,7 @@ def evaluate(products, locations, orders, a, config=None):
     distance = travel(orders, a, locations, c)
     cases = sum(o.qty for o in orders)
     seconds = distance / c.walking_mps + cases * c.handling_seconds
-    stability = pallet_stability_proxy(products, a)
+    stability = pallet_stability_proxy(products, a, locations)
     return {
         'sequence_proxy': proxy(a, locations, evidence(products, orders)),
         'products_moved': sum(a.get(p.sku) != p.location for p in products if p.location),
