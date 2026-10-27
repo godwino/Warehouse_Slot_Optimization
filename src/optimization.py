@@ -2,7 +2,7 @@
 from itertools import combinations
 from .models import Config
 from .validation import fit, validate
-from .evaluation import evidence, proxy, travel
+from .evaluation import evidence, proxy, travel, pair_cost
 from .movement import move_plan
 
 def optimize(products,locations,orders,config=None,max_passes=3):
@@ -35,7 +35,7 @@ def optimize(products,locations,orders,config=None,max_passes=3):
         if winner is None: break
         best=winner; value=winner_value; accepted+=1
     return {'assignment':best,'status':'Improvement found' if accepted else 'No improvement found','objective_before':score(baseline),'objective_after':value,
-            'optimality_guaranteed':False,'search':'Best feasible vacancy/swap and bounded three-cycle search; at most three passes','plan':move_plan(products,locations,best)}
+            'optimality_guaranteed':False,'search':f'Best feasible vacancy/swap and bounded three-cycle search; at most {max_passes} passes','plan':move_plan(products,locations,best)}
 
 def place_new(product,products,locations,orders,config=None,max_depth=3,limit=10):
     c=config or Config()
@@ -44,6 +44,11 @@ def place_new(product,products,locations,orders,config=None,max_depth=3,limit=10
     errors=validate(allp,locations,orders,base)
     if errors: raise ValueError('; '.join(errors))
     results=[]
+    seen=set()
+    old_pairs=evidence(products,orders)
+    old_proxy=proxy(base,locations,old_pairs)
+    routes=[l.route for l in locations if l.zone==product.zone]
+    lo,hi=min(routes,default=0),max(routes,default=1)
     explored=0
     def paths(s,a,depth,visited):
         nonlocal explored
@@ -60,9 +65,27 @@ def place_new(product,products,locations,orders,config=None,max_depth=3,limit=10
         plan=move_plan(allp,locations,a)
         if not plan['safe']: continue
         moved=sum(a[s]!=base[s] for s in base)
-        # Cold start uses declared expected line frequency, no invented co-occurrence.
-        rank=c.move_penalty*moved+product.expected_frequency*ls[a[product.sku]].route/10000
-        results.append({'assignment':a,'location':a[product.sku],'existing_moves':moved,'rank_cost':rank,'plan':plan,
-                        'explanation':'Upright dimension, case weight, zone, stock and lock checks passed. Cold-start route preference uses assumed frequency; no historical co-occurrence evidence for this SKU.'})
+        signature=tuple(sorted(a.items()))
+        if signature in seen: continue
+        seen.add(signature)
+        # Cold start: nearby cases are an explicit exposure assumption, not history.
+        route=ls[a[product.sku]].route
+        neighbors=sorted((p for p in products if p.sku in a and p.zone==product.zone),
+                         key=lambda p:abs(ls[a[p.sku]].route-route))[:8]
+        compatibility=sum(pair_cost(p,product) if ls[a[p.sku]].route<route
+                          else pair_cost(product,p) for p in neighbors)/max(1,len(neighbors))
+        history_delta=proxy(a,locations,old_pairs)-old_proxy
+        route_fraction=(route-lo)/max(1,hi-lo)
+        # Frequency saturates at 100 lines / comparable 30 days; no fake co-picks.
+        frequency_cost=min(1,product.expected_frequency/100)*route_fraction
+        parts={'compatibility':compatibility,'existing_sequence_delta':history_delta,
+               'frequency_access':0.15*frequency_cost,'relocation':c.move_penalty*moved}
+        rank=sum(parts.values())
+        results.append({'assignment':a,'location':a[product.sku],'existing_moves':moved,
+                        'rank_cost':rank,'score_components':parts,'plan':plan,
+                        'explanation':f'Fit, zone, stock and lock checks passed. Case cube {product.case_cube_m3:.4f} m³. '
+                        f'Compatibility cost {compatibility:.3f} uses eight nearest route neighbors (assumed exposure); '
+                        f'existing historical sequence change {history_delta:+.3f}; {moved} existing relocations. '
+                        'Lower total cost ranks first. No co-occurrence history is invented for the new SKU.'})
     results.sort(key=lambda r:(r['rank_cost'],r['existing_moves'],r['location']))
-    return {'status':'Options found' if results else 'Infeasible within configured chain depth','options':results[:limit],'max_displacements':max_depth,'candidate_checks':explored,'search_limit':10000}
+    return {'status':'Options found' if results else 'Infeasible within configured chain depth','options':results[:limit],'max_displacements':max_depth,'candidate_checks':explored,'search_limit':10000,'search_truncated':explored>=10000}

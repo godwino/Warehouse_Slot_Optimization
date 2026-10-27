@@ -1,46 +1,64 @@
-# Stable pallet builder for grocery pickers
+# Grocery Slot Intelligence
 
-A local Streamlit application for QA and warehouse teams to review case placement and build safer, more stable grocery pallets within approved zones. The primary goal is to help pickers assemble pallets that are stable, crush-resistant and more operationally safe, while still improving pick efficiency and decision quality. Credit: Godwin Osayamwen.
+**Put the right case in the right place — and show the operational reasoning.**
+A stakeholder demonstration by Godwin Osayamwen, built on the existing Warehouse Slot Optimization repository. Streamlit brings together grocery masters, constraint checks, route-aware recommendations, before/after evaluation and QA move plans. Existing simulation and legacy slotting modules remain available.
 
-## Run on Windows PowerShell
+## Business problem
 
-```powershell
-cd C:\Users\Osayamwen\Desktop\Slot_Optimization\warehouse_digital_twin
+A physically compatible slot can still put fragile chips ahead of heavy water on the pick path. Incoming products also create displacement decisions: use a vacancy, relocate an incumbent, or rearrange several products? QA needs a clear, reviewable proposal that balances these trade-offs without overwriting occupied slots.
+
+This demo supports that decision for D3 → D4 → D5. Pickers travel from low to high bay numbers in each aisle, then exit and start the next aisle. Rack level and eventual pallet layer are different concepts: earlier collection only creates an opportunity to build a stronger base.
+
+## Run locally
+
+```bash
+git clone https://github.com/godwino/Warehouse_Slot_Optimization.git
+cd Warehouse_Slot_Optimization
 python -m venv .venv
-\.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-\.\.venv\Scripts\python.exe -m streamlit run app/streamlit_app.py
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app/streamlit_app.py
 ```
 
-Open the localhost address printed by Streamlit. For an environment with dependencies already installed: `python -m streamlit run app/streamlit_app.py`.
-
-```powershell
+```bash
 python -m unittest discover -s tests -v
 python -m src.export_sample
 ```
 
-The export command creates reproducible synthetic CSVs, blank templates and an infeasible example in `data/sample/`. The application also offers CSV downloads and atomic validated bundle imports. Use exact template headers, UTF-8, ISO dates and true/false booleans. Empty current locations denote unslotted products; order lines cannot reference an unslotted product.
+## Five-minute presentation
 
-## Workflow
+1. **Overview:** show the route map, product weights and baseline sequence risk. Hover over slots to inspect products.
+2. **Improve Existing Positions:** run feasible improvement search; compare current and proposed positions and the objective.
+3. **Follow a Sample Assignment:** show identical products and quantities collected in a different sequence.
+4. **Place a New Product:** enter an incoming case. Try a light fragile case, a heavy robust case, and a 200 cm case that cannot fit. Inspect ranked options, score components and ordered moves.
+5. **QA Review and Move Plan:** export a CSV action list or save a scenario for review. Local approval records a decision; it does not execute warehouse moves.
 
-1. Overview explains the current baseline, proposed pallet-support metrics and the assumptions behind stable case placement.
-2. Decision-tree recommendation helps you enter product size, weight, support and crushability, then ranks the best warehouse slot options using practical fit and stability logic.
-3. Improve Existing Positions evaluates vacancies, swaps and bounded three-product cycles. Inspect current/proposed route maps and objective values with a focus on case compatibility and stable pallet construction.
-4. Follow a Sample Assignment compares identical case quantities on the explicit route and highlights support/crushability trade-offs in pallet formation.
-5. Place a New Product ranks vacancies and displacement chains using expected frequency as a cold-start assumption while checking whether a case can be safely integrated into stable pallet builds.
-6. QA Review saves an immutable scenario. Record reviewed before approved, with reviewer and notes. Approval does not execute moves, but it does create a decision record for safe pallet build planning.
-7. Data and Validation supports searches, CSVs, scenario JSON and demo route configuration (01-48 or 11-58). Regenerating the demo replaces the active in-memory draft.
-8. Stakeholder Brief provides a downloadable pilot outline focused on pallet stability and picker safety.
+## How recommendations work
 
-SQLite snapshots and review history live in `data/scenarios.sqlite3`. Export/import scenario JSON includes data, configuration and proposed assignments; review history stays in the local database and is not imported as an approval. This is not enterprise authentication or a production approval system.
+| Stage | Logic |
+| --- | --- |
+| Feasibility | Approved zone, upright dimensions with base rotation, allowed levels, case weight, declared stock capacity, rack load, replenishment permission and locks. |
+| Case compatibility | Earlier-case crushability, support weakness, top-load exceedance and later-case footprint overhang contribute to a lower-is-better risk proxy. Weight and dimensions are case-level; cube is derived in m³. |
+| Existing layout | Historical assignment co-occurrence weights pairwise route risk. Vacancies, swaps and bounded three-product cycles compete against relocation penalties and optional modeled travel. |
+| Incoming case | Score = nearby compatibility + change in existing historical risk + frequency access cost + relocation penalty. Compatibility uses the eight nearest products in the approved zone as an explicit exposure assumption. |
+| Frequency | Incoming access cost = 0.15 × min(1, expected 30-day line frequency / 100) × normalized route position. This is a tunable demo preference, not measured travel savings. |
+| Move plan | Vacancies are used first; cycles require compatible empty staging. A plan that cannot be sequenced without overwriting occupancy is rejected. |
 
-## Modules and retained features
+Incoming cases have no invented historical co-picks. Weight, footprint and height affect fit and pair compatibility; cube is descriptive, not an independent safety proof. Scores are heuristic costs, not damage probabilities. Lower total cost ranks first; detailed components expose trade-offs.
 
-`models`, `validation`, `sample_data`, `evaluation`, `optimization`, `movement`, and `persistence` separate the decision workflow. Original SKU generation, random/PRIME assignment, heatmaps and truck-arrival helpers remain available for legacy experiments. They are not the grocery constraint engine. Legacy picking now traverses each order by aisle rather than making one dock trip per line.
+## Demonstration data and assumptions
 
-The new “Place a New Product” workflow behaves like a guided decision tree: users enter case weight, dimensions, support, crushability, allowed levels and other slotting inputs, and the app recommends the best compatible slot while showing the reasoning path and candidate moves.
+The reproducible seed-42 pilot includes 63 SKUs, 144 slots and 30 days of synthetic assignments. Seven families cover vinegar, water, Pepsi, juice, Great Value cola, rice and chips. Family-specific dimensions and variant weights produce different cubes and support profiles. Frequency, visits/day and cases/day are calculated from the generated lines. These are illustrative cases and packaging ratings, not manufacturer specifications or company operational data. Use `data/sample/` CSVs and templates for imports; all three files are validated together.
 
-See [algorithm](docs/algorithm.md), [data dictionary](docs/data_dictionary.md) and [stakeholder brief / walkthrough / pilot](docs/stakeholder_brief.md).
+## Expected operational value and pilot measurement
 
-## Limits
+The intended value is more consistent QA decisions, fewer heavy-after-fragile collection patterns and transparent relocation effort. No savings or safety improvement has been established. Run a controlled pilot on comparable shifts and SKU mixes: measure damaged cases per 1,000 cases, damage dollars, cases per labour hour, replenishment effort, move execution time and QA acceptance. Compare the same workload before/after in this demo; validate any real benefit against observed results and implementation costs.
 
-Heuristic search is bounded, not globally optimal. Existing-layout optimization performs at most three passes; three-cycles cover only the first twelve movable products. New-product search is capped at 10,000 location checks and configured displacement depth, so an infeasible result means none found within that search. No physical pallet simulation, layer packing, aggregate stacking-load proof, damage prediction, WMS/Vocollect integration, operational execution, enterprise identities or production approval controls are implemented. Shared rack-beam loads and geometric stock packing require measured data and a future model. Declared stock capacity is checked separately from upright case fit. Geometry/timing and synthetic case characteristics require local validation. Do not use illustrative load ratings as manufacturer specifications.
+## Scope and limitations
+
+Search is bounded, not globally optimal: existing optimization defaults to three passes with three-cycles limited to the first twelve movable SKUs. Incoming search allows configured displacement depth and at most 10,000 location checks; failure means no option found within those limits. Route-order stability summaries describe the master sequence, while historical sequence risk uses actual synthetic assignment co-occurrence. Neither is a physical pallet simulation.
+
+The model does not prove cumulative stacking loads, layer packing, shared beam loads or aggregate geometric stock fit. Slot stock capacity is a declared input. WMS integration, authenticated approval and live execution are outside scope. SQLite scenarios (`data/scenarios.sqlite3`) use self-reported reviewer names. Incoming-case draft placement should be reviewed/exported before beginning another optimization; reset the demonstration for a fresh baseline.
+
+See [algorithm details](docs/algorithm.md), [data dictionary](docs/data_dictionary.md) and [stakeholder pilot brief](docs/stakeholder_brief.md). Original generators, PRIME/random assignment, picking and truck helpers are preserved separately from the grocery engine.

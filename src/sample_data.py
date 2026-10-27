@@ -14,7 +14,12 @@ def sample(config=None, seed=42):
     indices=list(range(63)); rng.shuffle(indices)
     for i in range(63):
         name,w,s,cr,pack=families[i%7]
-        products.append(Product(f'G{i+1:03d}',f'{name} {variants[i//7]}',name,'Zone 1',w,40,30,28,pack,s,cr,3 if cr>.8 else 35,locations[indices[i]].location_id,i<2,0,4))
+        length,width,height={
+            'Vinegar':(40,30,32),'Water':(42,28,26),'Pepsi':(40,27,18),
+            'Juice':(38,26,30),'Great Value cola':(41,28,19),
+            'Rice':(50,32,16),'Chips':(55,38,42)}[name]
+        factor=1+(i//7-4)*0.025
+        products.append(Product(f'G{i+1:03d}',f'{name} {variants[i//7]}',name,'Zone 1',round(w*factor,2),length,width,height,pack,s,cr,3 if cr>.8 else 35,locations[indices[i]].location_id,i<2,0,4))
     locations[-1].locked=True
     orders=[]
     for day in range(30):
@@ -22,4 +27,9 @@ def sample(config=None, seed=42):
             aid=f'A{day:02d}-{j:02d}'
             chosen=rng.sample(products,10)
             for p in chosen: orders.append(OrderLine(f'2026-09-{day+1:02d}',f'O{day:02d}-{j//2:02d}',aid,p.sku,rng.randint(1,4),'Zone 1'))
+    for p in products:
+        lines=[o for o in orders if o.sku==p.sku]
+        p.expected_frequency=len(lines)
+        p.pick_visits_per_day=round(len(lines)/30,2)
+        p.avg_cases_per_day=round(sum(o.qty for o in lines)/30,2)
     return products,locations,orders

@@ -25,3 +25,8 @@ Move plans drain available destinations first. Cycles require an empty, unlocked
 Baseline and proposal are evaluated against exactly the same order lines and SHA-256 workload fingerprint. Travel starts/ends at the front of the first configured aisle, uses front-entry/front-exit at each visited aisle, visits ascending bay numbers, and traverses the front cross-aisle between aisles. Bay positions and aisle gaps are configurable illustrative meters. Aisles are not assumed to be serpentine. Empty aisles have no depth traversal. Modeled cases/hour = cases * 3600 / (travel/walking speed + cases*handling seconds). Defaults 1.2 m/s and 5 s/case are visible assumptions, not productivity evidence.
 
 The original code ignored dimensions/weight and zones, had no packaging model, made per-line dock trips, allowed incomparable workloads and omitted new placement/movement plans. The new workflow addresses these with hard feasibility checks, pairwise packaging proxy, assignment route estimates, identical workload evaluation and staged plans. Original generic random/PRIME helpers remain illustrative legacy APIs, not valid grocery recommendations. No meters and productivity share a chart axis.
+
+
+## Incoming-case ranking update
+
+Incoming options now rank by eight-nearest-neighbor case compatibility, change in existing historical sequence proxy, frequency access preference and relocation penalty. See the README for the exact formula and assumptions. `score_components` exposes each term; `search_truncated` reports exhaustion of the location-check budget. Stability summaries now use declared location route order when locations are supplied.
